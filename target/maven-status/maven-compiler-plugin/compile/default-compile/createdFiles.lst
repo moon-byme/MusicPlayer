@@ -1,0 +1,9 @@
+model\Artista.class
+interfaces\IPilha.class
+interfaces\IHeap.class
+interfaces\IArvore.class
+interfaces\IHash.class
+model\Playlist.class
+model\Musica.class
+interfaces\IFila.class
+interfaces\ILista.class
