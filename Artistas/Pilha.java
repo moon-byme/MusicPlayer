@@ -29,4 +29,8 @@ public class Pilha<T> {
 			atual = atual.getProximo();
 		}
 	}
+	
+	public boolean isEmpty() {
+		return topo == null;
+	}
 }
