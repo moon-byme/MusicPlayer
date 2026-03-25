@@ -9,12 +9,10 @@ public class HistoricoMusicas {
         this.tamanho = 0;
     }
     
-    // CORREÇÃO: antes estava "novoNo = topo" (que não faz sentido)
-    // AGORA: o novo nó aponta para o topo antigo, e o topo vira o novo nó
     public void adicionar(Musicas musica) {
         No<Musicas> novoNo = new No<>(musica);
-        novoNo.setProximo(topo);  // novo nó aponta para o antigo topo
-        topo = novoNo;            // topo agora é o novo nó
+        novoNo.setProximo(topo);
+        topo = novoNo;
         tamanho++;
     }
     
