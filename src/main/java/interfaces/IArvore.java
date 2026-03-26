@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.util.List;
+
 /**
  * Interface para Árvore de Busca Binária Balanceada (AVL).
  * Implementada por: (a definir)
@@ -13,7 +15,7 @@ public interface IArvore<T extends Comparable<T>> {
 
     void remover(T elemento);
 
-    ILista<T> inOrder();
+    List<T> inOrder();
 
     boolean isEmpty();
 }
