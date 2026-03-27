@@ -1,17 +1,22 @@
-package Artistas;
+package reproducer;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Musica;
+import structures.ArvoreAVL;
+import structures.FiladeReproducao;
+import structures.HeapBinaria;
+import structures.HistoricoMusicas;
+
 public class Reprodutor {
-    
+
     private ArvoreAVL catalogo;
     private FiladeReproducao fila;
     private HistoricoMusicas historico;
     private HeapBinaria ranking;
-    private Musicas tocandoAtualmente;
-    private HashArtistas hashArtistas;
-    
+    private Musica tocandoAtualmente;
+
     public Reprodutor() {
         this.catalogo = new ArvoreAVL();
         this.fila = new FiladeReproducao();
@@ -20,109 +25,96 @@ public class Reprodutor {
         this.tocandoAtualmente = null;
         this.hashArtistas = new TabelaHash(100);
     }
-    
-    public void adicionarMusica(Musicas musica) {
+
+    public void adicionarMusica(Musica musica) {
         catalogo.inserir(musica);
-        hashArtistas.inserir(musica);
         System.out.println("✓ Música \"" + musica.getNome() + "\" adicionada.");
     }
-    
-    public Musicas buscarMusica(String titulo) {
+
+    public Musica buscarMusica(String titulo) {
         return catalogo.buscarPorTitulo(titulo);
     }
 
-    public void buscarPorArtista(String nomeArtista) {
-    System.out.println("\n===== Músicas de: " + nomeArtista + " =====");
-    
-    // A busca na Hash é O(1) instantânea!
-    ListaSimplesmenteEncadeada listaMusicas = hashArtistas.buscar(nomeArtista);
-    
-    if (listaMusicas == null || listaMusicas.isEmpty()) {
-        System.out.println("Nenhuma música encontrada para este artista.");
-    } else {
-        listaMusicas.exibir(); 
-    }
-}
-    
     public List<Musicas> listarTodasMusicas() {
         return catalogo.inOrder();
     }
-    
-    public void adicionarNaFila(Musicas musica) {
-        if (musica == null) return;
+
+    public void adicionarNaFila(Musica musica) {
+        if (musica == null)
+            return;
         fila.enqueue(musica);
-        System.out.println("✓ \"" + musica.getNome() + "\" adicionado à fila.");
+        System.out.println("✓ \"" + musica.getTitulo() + "\" adicionado à fila.");
     }
-    
-    
-    public Musicas obterProximaDaFila() {
+
+    public Musica obterProximaDaFila() {
         return fila.dequeue(); // Remove e retorna a primeira da fila
     }
-    
-    
-    public void marcarComoTocada(Musicas musica) {
-        if (tocandoAtualmente != null) {
-            historico.adicionar(tocandoAtualmente);
+
+    public void marcarComoTocada(Musica musica) {
+        if (musica != null) {
+            musica.incrementarPlays();
+            if (tocandoAtualmente != null) {
+                historico.adicionar(tocandoAtualmente);
+            }
+            tocandoAtualmente = musica;
+            atualizarRanking();
         }
-        tocandoAtualmente = musica;
-        atualizarRanking();
     }
-    
+
     public void voltarMusica() {
-        Musicas anterior = historico.voltar();
-        
+        Musica anterior = historico.voltar();
+
         if (anterior == null) {
             System.out.println("\n⏮ Nenhuma música no histórico.");
             return;
         }
-        
+
         if (tocandoAtualmente != null) {
             fila.enqueue(tocandoAtualmente);
         }
-        
+
         tocandoAtualmente = anterior;
-        System.out.println("\n⏮ Voltando para: " + anterior.getNome());
+        System.out.println("\n⏮ Voltando para: " + anterior.getTitulo());
     }
-    
-    
+
     public void atualizarRanking() {
         ranking = new HeapBinaria();
-        for (Musicas m : catalogo.inOrder()) {
+        for (Musica m : catalogo.inOrder()) {
             ranking.inserir(m);
         }
     }
-    
+
     public void mostrarRanking() {
         System.out.println("\n===== MAIS TOCADAS =====");
         if (ranking.isEmpty()) {
             System.out.println("Nenhuma música tocada.");
             return;
         }
-        
-        // Cria cópia 
+
+        // Cria cópia
         HeapBinaria copia = new HeapBinaria();
-        for (Musicas m : catalogo.inOrder()) {
+        for (Musica m : catalogo.inOrder()) {
             copia.inserir(m);
         }
-        
+
         int pos = 1;
         while (!copia.isEmpty()) {
-            Musicas m = copia.extrairMax();
+            Musica m = copia.extrairMax();
             if (m.getPlays() > 0) {
-                System.out.println(pos + ". " + m.getNome() + " (" + m.getPlays() + " plays)");
+                System.out.println(pos + ". " + m.getTitulo() + " (" + m.getPlays() + " plays)");
                 pos++;
             }
         }
     }
-    
+
     public void musicaAtual() {
         if (tocandoAtualmente == null) {
             System.out.println("Nenhuma música tocando.");
         } else {
-            System.out.println("Tocando: " + tocandoAtualmente.getNome());
+            System.out.println("Tocando: " + tocandoAtualmente.getTitulo());
         }
     }
-    
+
     public void exibirFila() {
         fila.exibir();
     }
@@ -130,23 +122,23 @@ public class Reprodutor {
     public void exibirHistorico() {
         System.out.println("\n========== STATUS DO REPRODUTOR ==========");
         if (tocandoAtualmente != null) {
-            System.out.println("▶ A TOCAR AGORA: " + tocandoAtualmente.getNome() + 
-                               " [" + tocandoAtualmente.getArtista() + "]");
+            System.out.println("▶ A TOCAR AGORA: " + tocandoAtualmente.getNome() +
+                    " [" + tocandoAtualmente.getArtista() + "]");
         } else {
             System.out.println("▶ A TOCAR AGORA: <Nenhuma música em reprodução>");
         }
-    
+
         System.out.println("------------------------------------------");
         System.out.println("⏮ MÚSICAS ANTERIORES (Histórico):");
-        historico.exibir(); 
-        
+        historico.exibir();
+
         System.out.println("==========================================");
     }
-    
+
     public boolean filaVazia() {
         return fila.isEmpty();
     }
-    
+
     public List<Musicas> buscarMusicasPorTitulo(String parte) {
         List<Musicas> resultado = new ArrayList<>();
         for (Musicas m : catalogo.inOrder()) {
@@ -155,17 +147,5 @@ public class Reprodutor {
             }
         }
         return resultado;
-    }
-
-    public void tocarProxima() {
-        Musicas proxima = fila.dequeue();
-        
-        if (proxima != null) {
-            marcarComoTocada(proxima);
-            proxima.incrementarPlays(); 
-            System.out.println("\n▶ Tocando agora: " + proxima.getNome());
-        } else {
-            System.out.println("\n⚠ A fila está vazia!");
-        }
     }
 }
