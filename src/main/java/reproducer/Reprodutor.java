@@ -8,6 +8,7 @@ import structures.ArvoreAVL;
 import structures.FiladeReproducao;
 import structures.HeapBinaria;
 import structures.HistoricoMusicas;
+import structures.HashArtistas;
 
 public class Reprodutor {
 
@@ -16,6 +17,7 @@ public class Reprodutor {
     private HistoricoMusicas historico;
     private HeapBinaria ranking;
     private Musica tocandoAtualmente;
+    private HashArtistas hashArtistas;
 
     public Reprodutor() {
         this.catalogo = new ArvoreAVL();
@@ -23,19 +25,20 @@ public class Reprodutor {
         this.historico = new HistoricoMusicas();
         this.ranking = new HeapBinaria();
         this.tocandoAtualmente = null;
-        this.hashArtistas = new TabelaHash(100);
+        this.hashArtistas = new HashArtistas(100);
+
     }
 
     public void adicionarMusica(Musica musica) {
         catalogo.inserir(musica);
-        System.out.println("✓ Música \"" + musica.getNome() + "\" adicionada.");
+        System.out.println("✓ Música \"" + musica.getTitulo() + "\" adicionada.");
     }
 
     public Musica buscarMusica(String titulo) {
         return catalogo.buscarPorTitulo(titulo);
     }
 
-    public List<Musicas> listarTodasMusicas() {
+    public List<Musica> listarTodasMusicas() {
         return catalogo.inOrder();
     }
 
@@ -122,7 +125,7 @@ public class Reprodutor {
     public void exibirHistorico() {
         System.out.println("\n========== STATUS DO REPRODUTOR ==========");
         if (tocandoAtualmente != null) {
-            System.out.println("▶ A TOCAR AGORA: " + tocandoAtualmente.getNome() +
+            System.out.println("▶ A TOCAR AGORA: " + tocandoAtualmente.getTitulo() +
                     " [" + tocandoAtualmente.getArtista() + "]");
         } else {
             System.out.println("▶ A TOCAR AGORA: <Nenhuma música em reprodução>");
@@ -139,10 +142,10 @@ public class Reprodutor {
         return fila.isEmpty();
     }
 
-    public List<Musicas> buscarMusicasPorTitulo(String parte) {
-        List<Musicas> resultado = new ArrayList<>();
-        for (Musicas m : catalogo.inOrder()) {
-            if (m.getNome().toLowerCase().contains(parte.toLowerCase())) {
+    public List<Musica> buscarMusicasPorTitulo(String parte) {
+        List<Musica> resultado = new ArrayList<>();
+        for (Musica m : catalogo.inOrder()) {
+            if (m.getTitulo().toLowerCase().contains(parte.toLowerCase())) {
                 resultado.add(m);
             }
         }
