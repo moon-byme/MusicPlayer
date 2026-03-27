@@ -50,11 +50,14 @@ public class Reprodutor {
     }
 
     public void marcarComoTocada(Musica musica) {
-        if (tocandoAtualmente != null) {
-            historico.adicionar(tocandoAtualmente);
+        if (musica != null) {
+            musica.incrementarPlays();
+            if (tocandoAtualmente != null) {
+                historico.adicionar(tocandoAtualmente);
+            }
+            tocandoAtualmente = musica;
+            atualizarRanking();
         }
-        tocandoAtualmente = musica;
-        atualizarRanking();
     }
 
     public void voltarMusica() {
