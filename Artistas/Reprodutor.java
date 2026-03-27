@@ -110,16 +110,26 @@ public class Reprodutor {
     public void exibirFila() {
         fila.exibir();
     }
-    
+
     public void exibirHistorico() {
-        historico.exibir();
-    }
+        System.out.println("\n========== STATUS DO REPRODUTOR ==========");
+        if (tocandoAtualmente != null) {
+            System.out.println("▶ A TOCAR AGORA: " + tocandoAtualmente.getNome() + 
+                               " [" + tocandoAtualmente.getArtista() + "]");
+        } else {
+            System.out.println("▶ A TOCAR AGORA: <Nenhuma música em reprodução>");
+        }
     
+        System.out.println("------------------------------------------");
+        System.out.println("⏮ MÚSICAS ANTERIORES (Histórico):");
+        historico.exibir(); 
+        
+        System.out.println("==========================================");
+    }
     
     public boolean filaVazia() {
         return fila.isEmpty();
     }
-    
     
     public List<Musicas> buscarMusicasPorTitulo(String parte) {
         List<Musicas> resultado = new ArrayList<>();
