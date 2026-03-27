@@ -31,6 +31,7 @@ public class Reprodutor {
 
     public void adicionarMusica(Musica musica) {
         catalogo.inserir(musica);
+        hashArtistas.inserir(musica);
         System.out.println("✓ Música \"" + musica.getTitulo() + "\" adicionada.");
     }
 
@@ -40,6 +41,17 @@ public class Reprodutor {
 
     public List<Musica> listarTodasMusicas() {
         return catalogo.inOrder();
+    }
+
+    public void listarPorArtista(String nomeArtista) {
+        System.out.println("\n===== MÚSICAS DE: " + nomeArtista.toUpperCase() + " =====");
+
+        var lista = hashArtistas.search(nomeArtista);
+        if (lista == null || lista.isEmpty()) {
+            System.out.println("Nenhuma música encontrada para este artista.");
+        } else {
+            lista.exibir();
+        }
     }
 
     public void adicionarNaFila(Musica musica) {
