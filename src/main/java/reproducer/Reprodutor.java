@@ -135,4 +135,8 @@ public class Reprodutor {
         }
         return resultado;
     }
+
+    public Musica getMusicaAtual() {
+        return tocandoAtualmente;
+    }
 }
