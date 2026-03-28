@@ -4,6 +4,11 @@ import model.Musica;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFileFormat;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 
 /**
@@ -53,6 +58,15 @@ public class ReprodutorAudioFX {
         if (caminhoBase == null) {
             System.out.println("⚠️ Pasta de músicas não encontrada! Usando modo simulação.");
         }
+    }
+
+    public boolean temPastaMusicas() {
+        return caminhoBase != null;
+    }
+
+    public void setCaminhoBase(String caminho) {
+        this.caminhoBase = caminho;
+        System.out.println("📁 Pasta de músicas definida: " + caminho);
     }
 
     /**
@@ -115,16 +129,31 @@ public class ReprodutorAudioFX {
 
     /**
      * MODO SIMULAÇÃO (quando não tem som real)
+     * Se o JavaFX estiver disponível, gera um WAV temporário para o MediaPlayer
+     * funcionar de verdade (play/pause/timer corretos).
      */
     private boolean tocarSimulado(Musica musica) {
-        System.out.println("\n🎵 (SIMULAÇÃO) TOCANDO: " + musica.getTitulo());
+        System.out.println("\n🎵 (SEM MP3) TOCANDO: " + musica.getTitulo());
         System.out.println("   Artista: " + musica.getArtista());
-        System.out.println("   💡 Dica: Coloque os arquivos MP3 na pasta Downloads/Músicas do Projeto/");
 
         this.musicaAtual = musica;
         this.tocando = true;
 
-        // simula a duração
+        if (inicializado) {
+            try {
+                int duracao = musica.getDuracao() > 0 ? musica.getDuracao() : 180;
+                File wavTemp = gerarArquivoWavTemporario(duracao);
+                Media media = new Media(wavTemp.toURI().toString());
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.setOnReady(() -> mediaPlayer.play());
+                mediaPlayer.setOnEndOfMedia(() -> parar());
+                return true;
+            } catch (Exception e) {
+                System.out.println("⚠️ Não foi possível gerar áudio temporário: " + e.getMessage());
+            }
+        }
+
+        // fallback: simula no console apenas
         new Thread(() -> {
             try {
                 for (int i = 0; i < 5; i++) {
@@ -145,7 +174,69 @@ public class ReprodutorAudioFX {
     }
 
     /**
-     * PARA A MÚSICA ⏹
+     * Gera um arquivo WAV temporário com a duração real da música.
+     * Tom de 440 Hz nos primeiros 2 segundos, silêncio no restante.
+     * Usa 8-bit mono a 22050 Hz para manter tamanho razoável (~3.9 MB / 3 min).
+     */
+    private File gerarArquivoWavTemporario(int duracaoSegundos) throws Exception {
+        int sampleRate = 22050;
+        int totalSamples = sampleRate * duracaoSegundos;
+        byte[] data = new byte[totalSamples];
+
+        // Tom audível nos primeiros 2 segundos
+        int samplesComTom = Math.min(sampleRate * 2, totalSamples);
+        for (int i = 0; i < samplesComTom; i++) {
+            data[i] = (byte) (60 * Math.sin(2 * Math.PI * 440.0 * i / sampleRate));
+        }
+        // Restante já é silêncio (zeros)
+
+        AudioFormat format = new AudioFormat(sampleRate, 8, 1, true, false);
+        AudioInputStream ais = new AudioInputStream(new ByteArrayInputStream(data), format, totalSamples);
+
+        File tmp = File.createTempFile("eda_audio_", ".wav");
+        tmp.deleteOnExit();
+        AudioSystem.write(ais, AudioFileFormat.Type.WAVE, tmp);
+        return tmp;
+    }
+
+    /**
+     * * PAUSA A MÚISCA ⏸
+     */
+    public void pausar() {
+        if (mediaPlayer != null && mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+            mediaPlayer.pause();
+            this.tocando = false;
+        } else {
+            // modo simulação
+            this.tocando = false;
+        }
+    }
+
+    /**
+     * RETOMA A MÚISCA ▶
+     */
+    public void retomar() {
+        if (mediaPlayer != null && mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
+            mediaPlayer.play();
+            this.tocando = true;
+        } else {
+            // modo simulação
+            this.tocando = true;
+        }
+    }
+
+    /**
+     * VERIFICA SE ESTÁ TOCANDO
+     */
+    public boolean estaTocando() {
+        if (mediaPlayer != null) {
+            return mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING;
+        }
+        return this.tocando;
+    }
+
+    /**
+     * * PARA A MÚSICA ⏹
      */
     public void parar() {
         if (mediaPlayer != null) {
@@ -191,5 +282,12 @@ public class ReprodutorAudioFX {
      */
     public Musica getMusicaAtual() {
         return musicaAtual;
+    }
+
+    /**
+     * RETORNA O MEDIAPLAYER PARA MONITORAR PROGRESSO
+     */
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
     }
 }

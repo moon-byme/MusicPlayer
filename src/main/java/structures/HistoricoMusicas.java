@@ -1,5 +1,7 @@
 package structures;
 
+import java.util.ArrayList;
+import java.util.List;
 import model.Musica;
 
 public class HistoricoMusicas {
@@ -53,5 +55,19 @@ public class HistoricoMusicas {
             atual = atual.getProximo();
             posicao++;
         }
+    }
+
+    /**
+     * Retorna as músicas do histórico em ordem (mais recente primeiro)
+     * sem destruir a pilha.
+     */
+    public List<Musica> toList() {
+        List<Musica> lista = new ArrayList<>();
+        No<Musica> atual = topo;
+        while (atual != null) {
+            lista.add(atual.getDado());
+            atual = atual.getProximo();
+        }
+        return lista;
     }
 }

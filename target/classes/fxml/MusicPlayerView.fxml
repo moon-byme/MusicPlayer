@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MusicPlayerController"
+            style="-fx-background-color: #121212;">
+    <left>
+        <VBox prefWidth="200.0" style="-fx-background-color: #1E1E1E; -fx-border-color: #2A2A2A; -fx-border-width: 0 1 0 0;">
+            <padding>
+                <Insets bottom="10.0" left="12.0" right="12.0" top="16.0" />
+            </padding>
+            <Label text="🎵 Reprodutor" style="-fx-font-size: 15; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;">
+                <padding>
+                    <Insets bottom="18.0" />
+                </padding>
+            </Label>
+            <Button fx:id="btnArtistas" text="👥  Artistas" style="-fx-padding: 10; -fx-font-size: 12; -fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-alignment: CENTER-LEFT; -fx-cursor: hand;" maxWidth="1.7976931348623157E308" />
+            <Button fx:id="btnMusicasCatalogo" text="🎵  Músicas" style="-fx-padding: 10; -fx-font-size: 12; -fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-alignment: CENTER-LEFT; -fx-cursor: hand;" maxWidth="1.7976931348623157E308" />
+            <Separator style="-fx-background-color: #2A2A2A; -fx-padding: 4 0 4 0;" />
+            <Button fx:id="btnTocando" text="▶  Tocando" style="-fx-padding: 10; -fx-font-size: 12; -fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-alignment: CENTER-LEFT; -fx-cursor: hand;" maxWidth="1.7976931348623157E308" />
+            <Button fx:id="btnLista" text="📋  Lista de Reprodução" style="-fx-padding: 10; -fx-font-size: 12; -fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-alignment: CENTER-LEFT; -fx-cursor: hand;" maxWidth="1.7976931348623157E308" />
+            <Button fx:id="btnHistorico" text="⏱  Tocados Recentemente" style="-fx-padding: 10; -fx-font-size: 12; -fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-alignment: CENTER-LEFT; -fx-cursor: hand;" maxWidth="1.7976931348623157E308" />
+            <Button fx:id="btnMaisTocadas" text="📈  Mais Tocadas" style="-fx-padding: 10; -fx-font-size: 12; -fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-alignment: CENTER-LEFT; -fx-cursor: hand;" maxWidth="1.7976931348623157E308" />
+            <VBox VBox.vgrow="ALWAYS" />
+            <Button fx:id="btnSair" text="❌  Sair" style="-fx-padding: 10; -fx-font-size: 12; -fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-alignment: CENTER-LEFT; -fx-cursor: hand;" maxWidth="1.7976931348623157E308" />
+        </VBox>
+    </left>
+    <center>
+        <VBox VBox.vgrow="ALWAYS" style="-fx-background-color: #121212;">
+            <Label fx:id="lblTitulo" text="Músicas" style="-fx-font-size: 22; -fx-font-weight: bold; -fx-padding: 16; -fx-text-fill: #FFFFFF;">
+            </Label>
+            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 6 16 12 16; -fx-background-color: #1E1E1E; -fx-border-color: #2A2A2A; -fx-border-width: 0 0 1 0;">
+                <TextField fx:id="txtBusca" promptText="🔍  Buscar..." prefWidth="220"
+                           style="-fx-background-color: #2A2A2A; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #666; -fx-border-color: #3A3A3A; -fx-border-radius: 4; -fx-background-radius: 4; -fx-padding: 6 10 6 10;" />
+                <RadioButton fx:id="rbTitulo" text="Título" selected="true"
+                             style="-fx-text-fill: #B3B3B3;">
+                    <toggleGroup><ToggleGroup fx:id="grupoTipoBusca"/></toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="rbArtista" text="Artista"
+                             style="-fx-text-fill: #B3B3B3;">
+                    <toggleGroup><fx:reference source="grupoTipoBusca"/></toggleGroup>
+                </RadioButton>
+                <Button fx:id="btnBuscar" text="Buscar"
+                        style="-fx-font-size: 12; -fx-background-color: #E8587A; -fx-text-fill: #FFFFFF; -fx-background-radius: 4; -fx-cursor: hand; -fx-padding: 6 14 6 14;" />
+                <Button fx:id="btnLimparBusca" text="✕"
+                        style="-fx-font-size: 12; -fx-background-color: #2A2A2A; -fx-text-fill: #B3B3B3; -fx-background-radius: 4; -fx-cursor: hand;" />
+            </HBox>
+            <ScrollPane fx:id="scrollMusicas" fitToWidth="true" VBox.vgrow="ALWAYS"
+                        style="-fx-background: #121212; -fx-background-color: #121212;">
+                <FlowPane fx:id="gridMusicas" hgap="15.0" vgap="15.0" style="-fx-padding: 16; -fx-background-color: #121212;" />
+            </ScrollPane>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="0"
+              style="-fx-background-color: #181818; -fx-border-color: #2A2A2A; -fx-border-width: 1 0 0 0; -fx-min-height: 80;">
+            <!-- Esquerda: thumbnail + nome/artista -->
+            <HBox alignment="CENTER_LEFT" spacing="12" prefWidth="260" minWidth="180"
+                  style="-fx-padding: 12 0 12 16;">
+                <ImageView fx:id="imgPlayerThumb" fitWidth="52" fitHeight="52" preserveRatio="false" />
+                <VBox alignment="CENTER_LEFT" spacing="3">
+                    <Label fx:id="lblNomeMusica" text="Nenhuma música selecionada"
+                           maxWidth="180"
+                           style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;" />
+                    <Label fx:id="lblArtistaPlayer" text=""
+                           maxWidth="180"
+                           style="-fx-font-size: 11; -fx-text-fill: #B3B3B3;" />
+                </VBox>
+            </HBox>
+            <!-- Centro: controles + barra de progresso -->
+            <VBox alignment="CENTER" HBox.hgrow="ALWAYS" spacing="6"
+                  style="-fx-padding: 10 20 10 20;">
+                <HBox alignment="CENTER" spacing="20">
+                    <Button fx:id="btnVoltar" text="⏮"
+                            style="-fx-font-size: 18; -fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-cursor: hand; -fx-padding: 4 8 4 8;" />
+                    <Button fx:id="btnTocar" text="▶"
+                            style="-fx-font-size: 14; -fx-padding: 10 18 10 18; -fx-background-color: #E8587A; -fx-text-fill: #FFFFFF; -fx-background-radius: 50; -fx-min-width: 46; -fx-cursor: hand;" />
+                    <Button fx:id="btnProxima" text="⏭"
+                            style="-fx-font-size: 18; -fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-cursor: hand; -fx-padding: 4 8 4 8;" />
+                </HBox>
+                <HBox alignment="CENTER" spacing="10">
+                    <Label fx:id="lblTempoAtual" text="0:00"
+                           style="-fx-font-size: 11; -fx-text-fill: #B3B3B3; -fx-min-width: 35; -fx-alignment: center-right;" />
+                    <Slider fx:id="sliderProgresso" prefWidth="340" min="0" max="100" value="0"
+                            style="-fx-accent: #E8587A;" />
+                    <Label fx:id="lblTempoTotal" text="0:00"
+                           style="-fx-font-size: 11; -fx-text-fill: #B3B3B3; -fx-min-width: 35;" />
+                </HBox>
+            </VBox>
+            <!-- Elementos ocultos mantidos para compatibilidade -->
+            <Button fx:id="btnParar" visible="false" managed="false" text="⏹" />
+            <Label fx:id="lblAgora" visible="false" managed="false" text="" />
+            <Label fx:id="lblTempo" visible="false" managed="false" text="" />
+        </HBox>
+    </bottom>
+</BorderPane>
+

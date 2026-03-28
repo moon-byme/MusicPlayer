@@ -56,6 +56,7 @@ public class Main {
                 case 7 -> reprodutor.exibirFila();
                 case 8 -> reprodutor.exibirHistorico();
                 case 9 -> reprodutor.musicaAtual();
+                case 10 -> listarPorArtista();
                 case 0 -> System.out.println("Encerrando...");
                 default -> System.out.println("Opção inválida!");
             }
@@ -63,17 +64,24 @@ public class Main {
     }
 
     private static void listarMusicas() {
-        List<Musica> musicas = reprodutor.listarTodasMusicas();
+        ArvoreAVL catalogo = reprodutor.getCatalogo();
+        List<Musica> musicas = catalogo.inOrder();
         if (musicas.isEmpty()) {
-            System.out.println("Nenhuma música no catálogo.");
+            System.out.println("Nenhuma m\u00fasica no cat\u00e1logo.");
         } else {
-            System.out.println("\n===== CATÁLOGO COMPLETO =====");
+            System.out.println("\n===== CAT\u00c1LOGO COMPLETO =====");
             for (int i = 0; i < musicas.size(); i++) {
                 System.out.println((i + 1) + ". " + musicas.get(i).getTitulo() +
                         " - " + musicas.get(i).getArtista() +
                         " (" + musicas.get(i).getDuracaoFormatada() + ")");
             }
         }
+    }
+
+    private static void listarPorArtista() {
+        System.out.print("Digite o nome do artista: ");
+        String nome = scanner.nextLine().trim();
+        reprodutor.listarPorArtista(nome);
     }
 
     private static void buscarMusica() {
@@ -112,7 +120,7 @@ public class Main {
             if (tocou) {
                 proxima.incrementarPlays();
                 reprodutor.marcarComoTocada(proxima);
-                System.out.println("▶ Tocando: " + proxima.getTitulo());
+                System.out.println("▶ Reproduzindo: " + proxima.getTitulo());
                 reprodutorAudio.aguardarTermino();
             } else {
                 System.out.println("Não foi possível tocar a música.");

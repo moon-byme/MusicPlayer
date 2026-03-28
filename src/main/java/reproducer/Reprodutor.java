@@ -31,6 +31,7 @@ public class Reprodutor {
 
     public void adicionarMusica(Musica musica) {
         catalogo.inserir(musica);
+        hashArtistas.inserir(musica);
         System.out.println("✓ Música \"" + musica.getTitulo() + "\" adicionada.");
     }
 
@@ -40,6 +41,25 @@ public class Reprodutor {
 
     public List<Musica> listarTodasMusicas() {
         return catalogo.inOrder();
+    }
+
+    public void listarPorArtista(String nomeArtista) {
+        System.out.println("\n===== M\u00daSICAS DE: " + nomeArtista.toUpperCase() + " =====");
+
+        var lista = hashArtistas.buscarMusicas(nomeArtista);
+        if (lista == null || lista.isEmpty()) {
+            System.out.println("Nenhuma m\u00fasica encontrada para este artista.");
+        } else {
+            lista.exibir();
+        }
+    }
+
+    public ArvoreAVL getCatalogo() {
+        return catalogo;
+    }
+
+    public HistoricoMusicas getHistoricoMusicas() {
+        return historico;
     }
 
     public void adicionarNaFila(Musica musica) {
@@ -62,6 +82,26 @@ public class Reprodutor {
             tocandoAtualmente = musica;
             atualizarRanking();
         }
+    }
+
+    /**
+     * Volta para a música anterior e retorna ela (para a UI poder tocar)
+     */
+    public Musica voltarMusicaUI() {
+        Musica anterior = historico.voltar();
+
+        if (anterior == null) {
+            System.out.println("⎮ Não há música anterior no histórico.");
+            return null;
+        }
+
+        if (tocandoAtualmente != null) {
+            fila.enqueue(tocandoAtualmente);
+        }
+
+        tocandoAtualmente = anterior;
+        System.out.println("⏮ Voltando para: " + anterior.getTitulo());
+        return anterior;
     }
 
     public void voltarMusica() {
@@ -125,10 +165,10 @@ public class Reprodutor {
     public void exibirHistorico() {
         System.out.println("\n========== STATUS DO REPRODUTOR ==========");
         if (tocandoAtualmente != null) {
-            System.out.println("▶ A TOCAR AGORA: " + tocandoAtualmente.getTitulo() +
+            System.out.println("▶ Reproduzindo: " + tocandoAtualmente.getTitulo() +
                     " [" + tocandoAtualmente.getArtista() + "]");
         } else {
-            System.out.println("▶ A TOCAR AGORA: <Nenhuma música em reprodução>");
+            System.out.println("▶ Reproduzindo: <Nenhuma música em reprodução>");
         }
 
         System.out.println("------------------------------------------");
@@ -150,5 +190,16 @@ public class Reprodutor {
             }
         }
         return resultado;
+    }
+
+    /**
+     * Busca músicas pelo nome (parcial) do artista usando a HashArtistas.
+     */
+    public List<Musica> buscarMusicasPorArtista(String nomeArtista) {
+        return hashArtistas.buscarMusicasPorNomeParcial(nomeArtista);
+    }
+
+    public Musica getMusicaAtual() {
+        return tocandoAtualmente;
     }
 }

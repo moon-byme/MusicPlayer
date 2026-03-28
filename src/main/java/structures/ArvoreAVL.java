@@ -124,15 +124,20 @@ public class ArvoreAVL implements IArvore<Musica> {
             return new NoAVL(musica);
         }
 
-        // compara pelo título da música
+        // compara pelo título da música primeiro
         int cmp = musica.getTitulo().compareToIgnoreCase(atual.musica.getTitulo());
 
+        // se títulos iguais, compara pelo artista
+        if (cmp == 0) {
+            cmp = musica.getArtista().compareToIgnoreCase(atual.musica.getArtista());
+        }
+
         if (cmp < 0)
-            atual.esquerda = inserirRecursivo(atual.esquerda, musica);// se o título menor
+            atual.esquerda = inserirRecursivo(atual.esquerda, musica);
         else if (cmp > 0)
-            atual.direita = inserirRecursivo(atual.direita, musica);// se o título maior
+            atual.direita = inserirRecursivo(atual.direita, musica);
         else
-            return atual; // música já existe
+            return atual; // música exata (título + artista) já existe
 
         return balancear(atual);
     }
@@ -149,6 +154,11 @@ public class ArvoreAVL implements IArvore<Musica> {
             return false;
 
         int cmp = musica.getTitulo().compareToIgnoreCase(atual.musica.getTitulo());
+
+        // se títulos iguais, compara pelo artista
+        if (cmp == 0) {
+            cmp = musica.getArtista().compareToIgnoreCase(atual.musica.getArtista());
+        }
 
         if (cmp < 0)
             return buscarRecursivo(atual.esquerda, musica);
@@ -193,6 +203,11 @@ public class ArvoreAVL implements IArvore<Musica> {
             return null;
 
         int cmp = musica.getTitulo().compareToIgnoreCase(atual.musica.getTitulo());
+
+        // se títulos iguais, compara pelo artista
+        if (cmp == 0) {
+            cmp = musica.getArtista().compareToIgnoreCase(atual.musica.getArtista());
+        }
 
         if (cmp < 0)
             atual.esquerda = removerRecursivo(atual.esquerda, musica);

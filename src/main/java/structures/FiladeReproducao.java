@@ -1,5 +1,7 @@
 package structures;
 
+import java.util.ArrayList;
+import java.util.List;
 import model.Musica;
 
 public class FiladeReproducao {
@@ -69,6 +71,23 @@ public class FiladeReproducao {
         while (!temp.isEmpty()) {
             enqueue(temp.dequeue());
         }
+    }
+
+    /**
+     * Retorna todas as músicas da fila em uma List sem destruí-la.
+     */
+    public List<Musica> toList() {
+        List<Musica> lista = new ArrayList<>();
+        FiladeReproducao temp = new FiladeReproducao();
+        while (!isEmpty()) {
+            Musica m = dequeue();
+            lista.add(m);
+            temp.enqueue(m);
+        }
+        while (!temp.isEmpty()) {
+            enqueue(temp.dequeue());
+        }
+        return lista;
     }
 
 }
