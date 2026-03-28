@@ -3,8 +3,9 @@ package main;
 import model.Musica;
 import reproducer.Reprodutor;
 import structures.ArvoreAVL;
-import testejavafx.CarregadorMusicasCompleto;
 import testejavafx.ReprodutorAudioFX;
+import util.CarregadorMusicasCompleto;
+
 import java.util.List;
 import java.util.Scanner;
 

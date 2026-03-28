@@ -29,9 +29,8 @@ public class Reprodutor {
 
     }
 
-    public void adicionarMusica(Musica musica) {
+    // public void adicionarMusica(Musica musica) {
         catalogo.inserir(musica);
-        hashArtistas.inserir(musica);
         hashArtistas.inserir(musica);
         System.out.println("✓ Música \"" + musica.getTitulo() + "\" adicionada.");
     }

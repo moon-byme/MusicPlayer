@@ -27,8 +27,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import model.Musica;
 import reproducer.Reprodutor;
-import testejavafx.CarregadorMusicasCompleto;
 import testejavafx.ReprodutorAudioFX;
+import util.CarregadorMusicasCompleto;
 
 import java.net.URL;
 import java.util.ArrayList;
