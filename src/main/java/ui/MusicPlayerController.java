@@ -50,6 +50,8 @@ import model.Musica;
 import player.CarregadorMusicasCompleto;
 import player.ReprodutorAudioFX;
 import reproducer.Reprodutor;
+import testejavafx.ReprodutorAudioFX;
+import util.CarregadorMusicasCompleto;
 
 import java.net.URL;
 import java.util.ArrayList;
