@@ -34,8 +34,9 @@ public class HistoricoMusicas {
      */
     public void adicionar(Musica musica) {
         No<Musica> atual = topo;
-        while (atual != null) { 
-            if (atual.getDado().getTitulo().equals(musica.getTitulo())) { // verifica se a musica atual é igual a anterior
+        while (atual != null) {
+            if (atual.getDado().getTitulo().equals(musica.getTitulo())) { // verifica se a musica atual é igual a
+                                                                          // anterior
                 return; // já está no histórico
             }
             atual = atual.getProximo();
@@ -57,7 +58,10 @@ public class HistoricoMusicas {
         if (isEmpty()) {
             return null;
         }
-        return topo.getDado();
+        Musica musica = topo.getDado();
+        topo = topo.getProximo();
+        tamanho--;
+        return musica;
     }
 
     /**
