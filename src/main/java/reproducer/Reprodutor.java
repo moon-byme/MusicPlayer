@@ -1,5 +1,6 @@
 package reproducer;
 
+import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -226,8 +227,11 @@ public class Reprodutor {
     public List<Musica> buscarMusicasPorTitulo(String parte) {
         List<Musica> resultado = new ArrayList<>();
         String parteNorm = normalizar(parte);
+        String[] termos = termosSignificativos(parteNorm);
+
         for (Musica m : catalogo.inOrder()) {
-            if (normalizar(m.getTitulo()).contains(parteNorm)) {
+            String tituloNorm = normalizar(m.getTitulo());
+            if (tituloNorm.contains(parteNorm) || contemTodosOsTermos(tituloNorm, termos)) {
                 resultado.add(m);
             }
         }
@@ -235,9 +239,50 @@ public class Reprodutor {
     }
 
     private static String normalizar(String s) {
-        return Normalizer.normalize(s, Normalizer.Form.NFD)
+        if (s == null)
+            return "";
+
+        String corrigido = corrigirMojibake(s);
+        return Normalizer.normalize(corrigido, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}", "")
-                .toLowerCase();
+                .toLowerCase()
+                .replaceAll("[^a-z0-9 ]", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+    }
+
+    private static String[] termosSignificativos(String texto) {
+        if (texto == null || texto.isBlank()) {
+            return new String[0];
+        }
+
+        return texto.split(" ");
+    }
+
+    private static boolean contemTodosOsTermos(String texto, String[] termos) {
+        if (termos.length == 0) {
+            return false;
+        }
+
+        int termosUteis = 0;
+        for (String termo : termos) {
+            if (termo.length() < 2) {
+                continue;
+            }
+            termosUteis++;
+            if (!texto.contains(termo)) {
+                return false;
+            }
+        }
+
+        return termosUteis > 0;
+    }
+
+    private static String corrigirMojibake(String texto) {
+        if (texto.indexOf('Ã') >= 0 || texto.indexOf('Â') >= 0 || texto.indexOf('�') >= 0) {
+            return new String(texto.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        }
+        return texto;
     }
 
     /**
