@@ -6,9 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Árvore AVL para organizar músicas por título.
- * 
+ * Árvore AVL autobalanceável para organizar músicas em ordem alfabética por
+ * título.
+ *
+ * <p>
+ * Garante altura O(log n) após cada inserção ou remoção via rotações simples
+ * (LL, RR) e duplas (LR, RL). Chave de ordenação: título e, em caso de empate,
+ * artista
+ * (ambos case-insensitive).
+ * </p>
+ *
  * @author Isabelle
+ * @see interfaces.IArvore
+ * @see model.Musica
  */
 public class ArvoreAVL implements IArvore<Musica> {
 
@@ -111,6 +121,13 @@ public class ArvoreAVL implements IArvore<Musica> {
 
     // METODOS DE INSERÇÃO ABAIXO :)
 
+    /**
+     * Insere uma música na árvore. Músicas com mesmo título e artista são
+     * ignoradas.
+     * Rebalanceia automaticamente após a inserção — O(log n).
+     *
+     * @param musica música a ser inserida; ignorada se {@code null}
+     */
     @Override
     public void inserir(Musica musica) {
         if (musica == null)
@@ -144,6 +161,13 @@ public class ArvoreAVL implements IArvore<Musica> {
 
     // METODOS DE BUSCA ABAIXO (O(logn)) :)
 
+    /**
+     * Verifica se a música existe na árvore (busca por título + artista) — O(log
+     * n).
+     *
+     * @param musica música a procurar
+     * @return {@code true} se encontrada
+     */
     @Override
     public boolean buscar(Musica musica) {
         return buscarRecursivo(raiz, musica);
@@ -191,6 +215,13 @@ public class ArvoreAVL implements IArvore<Musica> {
 
     // MÉTODOS DE REMOVER ABAIXO(O(log n)) :)
 
+    /**
+     * Remove a música da árvore e rebalanceia — O(log n).
+     * Se a música possuir dois filhos, usa o sucessor in-order (mínimo da subárvore
+     * direita).
+     *
+     * @param musica música a remover; ignorada se {@code null}
+     */
     @Override
     public void remover(Musica musica) {
         if (musica == null)
@@ -238,8 +269,12 @@ public class ArvoreAVL implements IArvore<Musica> {
         return no;
     }
 
-    // PRA PERCORRER A ÁRVORE:
-    // esquerda->raiz->direita, retorna a lista em ordem alfabética
+    /**
+     * Retorna todas as músicas em percurso in-order (esquerda → raiz → direita),
+     * produzindo uma lista em ordem alfabética por título — O(n).
+     *
+     * @return lista ordenada de músicas
+     */
     @Override
     public List<Musica> inOrder() {
         List<Musica> lista = new ArrayList<>();

@@ -4,16 +4,39 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Musica;
 
+/**
+ * Fila de reprodução FIFO implementada com duas pilhas ({@link Pilha}).
+ *
+ * <p>
+ * Músicas são enfileiradas em {@code p1} e desenfileiradas de {@code p2}.
+ * Quando {@code p2} está vazia, todos os elementos de {@code p1} são
+ * transferidos, invertendo a ordem e garantindo o comportamento FIFO.
+ * </p>
+ *
+ * @author Carla Nascimento
+ * @see Pilha
+ * @see model.Musica
+ */
 public class FiladeReproducao {
     private Pilha<Musica> p1 = new Pilha<>();
     private Pilha<Musica> p2 = new Pilha<>();
     private int tamanho = 0; // ADICIONADO: controla o tamanho da fila
 
+    /**
+     * Adiciona uma música ao final da fila.
+     *
+     * @param m música a ser enfileirada
+     */
     public void enqueue(Musica m) {
         p1.push(m);
         tamanho++; // ADICIONADO
     }
 
+    /**
+     * Remove e retorna a primeira música da fila (FIFO).
+     *
+     * @return primeira música da fila, ou {@code null} se estiver vazia
+     */
     public Musica dequeue() {
         if (p2.isEmpty()) {
             while (!p1.isEmpty()) {

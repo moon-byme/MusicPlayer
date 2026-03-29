@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--
+    MusicPlayerView.fxml
+    Arquivo de layout FXML do Reprodutor de Músicas.
+
+    Define a estrutura visual da interface gráfica do player:
+      - Painel lateral esquerdo com navegação (Artistas, Músicas, Playlists, Histórico, Mais Tocadas)
+      - Área central com campo de busca e grade de cards (músicas/artistas/playlists)
+      - Barra inferior de controle de reprodução (play, pause, anterior, próxima, progresso, volume)
+      - Card expandido de música atual com imagem do artista e informações detalhadas
+
+    Controlador associado: {@link ui.MusicPlayerController}
+
+    @author Lethycia
+-->
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>

@@ -1,19 +1,28 @@
 package model;
 
 /**
- * O Artista é objeto de domínio, mas a TabelaHash usa String como chave (não
- * Artista),
- * eliminando risco de hashCode() mal implementado.
- * A classe é imutável, garantindo segurança em coleções e simplicidade de uso.
- * Sugestão de uso: armazenar Artista em uma coleção (ex: ArrayList) para
- * exibição, mas indexar músicas por título na ArvoreAVL usando String.
- * Implementação simples, sem necessidade de comparação ou ordenação — o nome do
- * artista é apenas um atributo descritivo das músicas.
+ * Representa um artista musical no sistema.
+ *
+ * Classe imutável de domínio — uma vez criado, o nome do artista não pode ser
+ * alterado.
+ * A {@link structures.HashArtistas} usa {@code String} como chave (e não
+ * {@code Artista}),
+ * evitando dependência de {@code hashCode()} desta classe para o funcionamento
+ * da hash.
+ *
+ * @author Lethycia
+ * @author Carla Nascimento
  */
 public final class Artista {
 
     private final String nome;
 
+    /**
+     * Cria um novo artista com o nome informado.
+     *
+     * @param nome nome do artista; não pode ser nulo ou vazio
+     * @throws IllegalArgumentException se o nome for nulo ou vazio
+     */
     public Artista(String nome) {
         if (nome == null || nome.trim().isEmpty()) {
             throw new IllegalArgumentException("Nome do artista não pode ser nulo ou vazio");
@@ -21,10 +30,18 @@ public final class Artista {
         this.nome = nome.trim();
     }
 
+    /**
+     * Retorna o nome do artista.
+     *
+     * @return nome do artista
+     */
     public String getNome() {
         return nome;
     }
 
+    /**
+     * Dois artistas são iguais se tiverem o mesmo nome (case-sensitive).
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)

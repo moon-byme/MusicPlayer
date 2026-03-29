@@ -5,6 +5,23 @@ import java.util.List;
 import model.Artista;
 import model.Musica;
 
+/**
+ * Tabela hash de artistas com resolução de colisões por encadeamento.
+ *
+ * <p>
+ * Mantém duas tabelas internas:
+ * </p>
+ * <ul>
+ * <li>{@code tabela} — armazena objetos {@link model.Artista} indexados por
+ * nome</li>
+ * <li>{@code tabelaMusicas} — agrupa as músicas de cada artista em uma
+ * {@link FiladeReproducao}</li>
+ * </ul>
+ *
+ * @author Carla Nascimento
+ * @see model.Artista
+ * @see model.Musica
+ */
 public class HashArtistas {
 	private No<Artista>[] tabela;
 	private int capacidade;
@@ -22,12 +39,23 @@ public class HashArtistas {
 
 	private EntradaMusica[] tabelaMusicas;
 
+	/**
+	 * Cria uma nova tabela hash com a capacidade (número de buckets) informada.
+	 *
+	 * @param capacidade número de buckets da tabela
+	 */
+	@SuppressWarnings("unchecked")
 	public HashArtistas(int capacidade) {
 		this.capacidade = capacidade;
 		this.tabela = (No<Artista>[]) new No[capacidade];
 		this.tabelaMusicas = new EntradaMusica[capacidade];
 	}
 
+	/**
+	 * Insere um artista na tabela hash (sem duplicatas, case-insensitive).
+	 *
+	 * @param novoArtista artista a ser inserido
+	 */
 	public void insert(Artista novoArtista) {
 		int indice = calcularIndice(novoArtista.getNome());
 
@@ -68,6 +96,9 @@ public class HashArtistas {
 		tabelaMusicas[indice] = nova;
 	}
 
+	/**
+	 * Exibe no console todos os artistas armazenados na tabela.
+	 */
 	public void exibirCatalogo() {
 		System.out.println("\n====== Artistas Cadastrados ======");
 		for (int i = 0; i < capacidade; i++) {
@@ -80,6 +111,12 @@ public class HashArtistas {
 		}
 	}
 
+	/**
+	 * Busca um artista pelo nome exato (case-insensitive).
+	 *
+	 * @param nome nome do artista
+	 * @return o {@link model.Artista} encontrado, ou {@code null} se não existir
+	 */
 	public Artista search(String nome) {
 		int indice = calcularIndice(nome);
 		No<Artista> atual = tabela[indice];

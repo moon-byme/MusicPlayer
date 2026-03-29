@@ -1,5 +1,6 @@
 package reproducer;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,32 @@ import structures.HeapBinaria;
 import structures.HistoricoMusicas;
 import structures.HashArtistas;
 
+/**
+ * Camada central de lógica do reprodutor de músicas.
+ *
+ * <p>
+ * Orquestra o catálogo ({@link structures.ArvoreAVL}), a fila de reprodução
+ * ({@link structures.FiladeReproducao}), o histórico
+ * ({@link structures.HistoricoMusicas}),
+ * o ranking de mais tocadas ({@link structures.HeapBinaria}) e o índice por
+ * artista
+ * ({@link structures.HashArtistas}).
+ * </p>
+ *
+ * <p>
+ * Principais responsabilidades:
+ * </p>
+ * <ul>
+ * <li>Adicionar músicas ao catálogo e à hash de artistas</li>
+ * <li>Gerenciar a fila FIFO de reprodução</li>
+ * <li>Registrar músicas tocadas no histórico e atualizar o ranking</li>
+ * <li>Navegar para a música anterior via histórico</li>
+ * <li>Buscar músicas por título ou artista (parcial, case-insensitive)</li>
+ * </ul>
+ *
+ * @author Isabelle
+ * @author Lethycia
+ */
 public class Reprodutor {
 
     private ArvoreAVL catalogo;
@@ -32,12 +59,21 @@ public class Reprodutor {
     public void adicionarMusica(Musica musica) {
         catalogo.inserir(musica);
         hashArtistas.inserir(musica);
-        hashArtistas.inserir(musica);
         System.out.println("✓ Música \"" + musica.getTitulo() + "\" adicionada.");
     }
 
     public Musica buscarMusica(String titulo) {
-        return catalogo.buscarPorTitulo(titulo);
+        Musica resultado = catalogo.buscarPorTitulo(titulo);
+        if (resultado != null)
+            return resultado;
+        // Fallback: busca normalizada (ignora acentos) para títulos acentuados
+        String tituloNorm = normalizar(titulo);
+        for (Musica m : catalogo.inOrder()) {
+            if (normalizar(m.getTitulo()).equals(tituloNorm)) {
+                return m;
+            }
+        }
+        return null;
     }
 
     public List<Musica> listarTodasMusicas() {
@@ -185,12 +221,19 @@ public class Reprodutor {
 
     public List<Musica> buscarMusicasPorTitulo(String parte) {
         List<Musica> resultado = new ArrayList<>();
+        String parteNorm = normalizar(parte);
         for (Musica m : catalogo.inOrder()) {
-            if (m.getTitulo().toLowerCase().contains(parte.toLowerCase())) {
+            if (normalizar(m.getTitulo()).contains(parteNorm)) {
                 resultado.add(m);
             }
         }
         return resultado;
+    }
+
+    private static String normalizar(String s) {
+        return Normalizer.normalize(s, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}", "")
+                .toLowerCase();
     }
 
     /**

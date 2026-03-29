@@ -3,8 +3,15 @@ package model;
 import structures.No;
 
 /**
- * Playlist unificada: metadados + lista de músicas.
- * Versão simples que junta as duas implementações.
+ * Representa uma playlist de músicas.
+ *
+ * Armazena metadados (nome e descrição) e uma lista encadeada de músicas
+ * implementada com {@link structures.No}. Suporta adição no final, remoção
+ * por título e consumo sequencial (dequeue) das músicas.
+ *
+ * Duas playlists são consideradas iguais se tiverem o mesmo nome.
+ *
+ * @author Lethycia
  */
 public class Playlist {
 
@@ -19,6 +26,13 @@ public class Playlist {
 
     // ==================== CONSTRUTORES ====================
 
+    /**
+     * Cria uma playlist com nome e descrição.
+     *
+     * @param nome      nome da playlist; não pode ser nulo ou vazio
+     * @param descricao descrição da playlist; pode ser nula (será string vazia)
+     * @throws IllegalArgumentException se o nome for nulo ou vazio
+     */
     public Playlist(String nome, String descricao) {
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("Nome da playlist não pode ser nulo ou vazio");
@@ -30,24 +44,47 @@ public class Playlist {
         this.tamanho = 0;
     }
 
+    /**
+     * Cria uma playlist apenas com nome, sem descrição.
+     *
+     * @param nome nome da playlist
+     */
     public Playlist(String nome) {
         this(nome, "");
     }
 
-    // ==================== GETTERS ====================
-
+    /**
+     * Retorna o nome da playlist.
+     *
+     * @return nome
+     */
     public String getNome() {
         return nome;
     }
 
+    /**
+     * Retorna a descrição da playlist.
+     *
+     * @return descrição, ou string vazia se não informada
+     */
     public String getDescricao() {
         return descricao;
     }
 
+    /**
+     * Retorna o número de músicas na playlist.
+     *
+     * @return quantidade de músicas
+     */
     public int getTamanho() {
         return tamanho;
     }
 
+    /**
+     * Verifica se a playlist está vazia.
+     *
+     * @return {@code true} se não houver músicas
+     */
     public boolean isEmpty() {
         return tamanho == 0;
     }
@@ -55,7 +92,9 @@ public class Playlist {
     // ==================== MÉTODOS DE MÚSICAS ====================
 
     /**
-     * Adiciona música ao final da playlist.
+     * Adiciona uma música ao final da playlist.
+     *
+     * @param musica a música a ser adicionada; ignorada se {@code null}
      */
     public void adicionarMusica(Musica musica) {
         if (musica == null)
@@ -75,7 +114,11 @@ public class Playlist {
     }
 
     /**
-     * Remove música pelo título.
+     * Remove a primeira música cujo título seja igual ao informado
+     * (case-insensitive).
+     *
+     * @param titulo título da música a remover
+     * @return {@code true} se removida, {@code false} se não encontrada
      */
     public boolean removerMusica(String titulo) {
         if (inicio == null)
@@ -113,14 +156,18 @@ public class Playlist {
     }
 
     /**
-     * Retorna a primeira música (sem remover).
+     * Retorna a primeira música da playlist sem removê-la.
+     *
+     * @return primeira música, ou {@code null} se a playlist estiver vazia
      */
     public Musica peekPrimeira() {
         return (inicio != null) ? inicio.getDado() : null;
     }
 
     /**
-     * Remove e retorna a primeira música.
+     * Remove e retorna a primeira música da playlist.
+     *
+     * @return primeira música, ou {@code null} se a playlist estiver vazia
      */
     public Musica dequeuePrimeira() {
         if (inicio == null)
@@ -138,7 +185,11 @@ public class Playlist {
     }
 
     /**
-     * Verifica se contém uma música pelo título.
+     * Verifica se a playlist contém uma música com o título informado
+     * (case-insensitive).
+     *
+     * @param titulo título a buscar
+     * @return {@code true} se encontrada, {@code false} caso contrário
      */
     public boolean contemMusica(String titulo) {
         No<Musica> atual = inicio;
@@ -154,7 +205,7 @@ public class Playlist {
     // ==================== EXIBIÇÃO ====================
 
     /**
-     * Exibe a playlist formatada.
+     * Exibe todas as músicas da playlist formatadas no console.
      */
     public void exibir() {
         System.out.println("\n===== PLAYLIST: " + nome.toUpperCase() + " =====");

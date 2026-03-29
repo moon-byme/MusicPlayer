@@ -1,5 +1,26 @@
 package ui;
 
+/**
+ * Controlador JavaFX da interface gráfica do Reprodutor de Músicas.
+ *
+ * Gerencia todos os eventos de botões, exibição de cards (músicas, artistas,
+ * playlists, histórico e ranking) e comunicação com as camadas de domínio
+ * ({@link reproducer.Reprodutor}) e de áudio ({@link player.ReprodutorAudioFX}).
+ *
+ * <p>Principais responsabilidades:</p>
+ * <ul>
+ *   <li>Carregar o catálogo de músicas via {@link player.CarregadorMusicasCompleto}</li>
+ *   <li>Gerenciar a fila de reprodução local e acionar a reprodução de áudio</li>
+ *   <li>Atualizar a barra inferior com título, artista, progresso e tempo</li>
+ *   <li>Renderizar cards dinâmicos para cada modo de visualização</li>
+ *   <li>Executar buscas por título ou artista</li>
+ * </ul>
+ *
+ * @author Lethycia
+ * @see reproducer.Reprodutor
+ * @see player.ReprodutorAudioFX
+ * @see MusicPlayerUI
+ */
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.animation.KeyFrame;
@@ -26,9 +47,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import model.Musica;
+import player.CarregadorMusicasCompleto;
+import player.ReprodutorAudioFX;
 import reproducer.Reprodutor;
-import testejavafx.CarregadorMusicasCompleto;
-import testejavafx.ReprodutorAudioFX;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -103,6 +124,11 @@ public class MusicPlayerController implements Initializable {
     private String modoAtual = "songs";
     private Timeline timerTempo;
 
+    /**
+     * Inicializa o controlador após o FXML ser carregado.
+     * Carrega músicas, configura botões, inicia o timer de progresso
+     * e verifica a disponibilidade da pasta de áudio.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         carregarMusicas();
@@ -114,6 +140,10 @@ public class MusicPlayerController implements Initializable {
         }
     }
 
+    /**
+     * Exibe um diálogo pedindo ao usuário que selecione a pasta
+     * com os arquivos MP3, caso ela não seja encontrada automaticamente.
+     */
     private void perguntarPastaMusicas() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Pasta de músicas");
@@ -140,6 +170,10 @@ public class MusicPlayerController implements Initializable {
         });
     }
 
+    /**
+     * Inicia um {@link javafx.animation.Timeline} que atualiza a barra de
+     * progresso e os rótulos de tempo a cada segundo durante a reprodução.
+     */
     private void iniciarTimer() {
         timerTempo = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             MediaPlayer mp = player.getMediaPlayer();
@@ -172,12 +206,14 @@ public class MusicPlayerController implements Initializable {
         return String.format("%02d:%02d", segundos / 60, segundos % 60);
     }
 
+    /** Carrega todas as músicas do catálogo e popula a lista observável. */
     private void carregarMusicas() {
         List<Musica> carre = CarregadorMusicasCompleto.carregarTodasMusicas();
         carre.forEach(reprodutor::adicionarMusica);
         musicas.setAll(reprodutor.listarTodasMusicas());
     }
 
+    /** Configura os handlers de todos os botões da interface. */
     private void configurarBotoes() {
         btnMusicasCatalogo.setOnAction(e -> {
             modoAtual = "songs";
@@ -193,7 +229,7 @@ public class MusicPlayerController implements Initializable {
 
         btnTocando.setOnAction(e -> {
             modoAtual = "playing";
-            lblTitulo.setText("▶ Reproduzindoa");
+            lblTitulo.setText("▶ Reproduzindo");
             exibirTocando();
         });
 
@@ -275,6 +311,10 @@ public class MusicPlayerController implements Initializable {
         btnSair.setOnAction(e -> System.exit(0));
     }
 
+    /**
+     * Executa a busca pelo termo digitado no campo de texto,
+     * filtrando por título ou artista conforme o RadioButton selecionado.
+     */
     private void executarBusca() {
         String termo = txtBusca.getText().trim();
         if (termo.isEmpty())
@@ -304,6 +344,7 @@ public class MusicPlayerController implements Initializable {
         }
     }
 
+    /** Exibe todos os cards de músicas do catálogo na grade central. */
     private void exibirMusicas() {
         gridMusicas.getChildren().clear();
         for (Musica m : musicas) {
@@ -311,6 +352,7 @@ public class MusicPlayerController implements Initializable {
         }
     }
 
+    /** Exibe um card por artista único encontrado no catálogo. */
     private void exibirArtistas() {
         gridMusicas.getChildren().clear();
         // Agrupar por artista
@@ -323,6 +365,7 @@ public class MusicPlayerController implements Initializable {
         }
     }
 
+    /** Exibe o card grande da música atualmente em reprodução. */
     private void exibirTocando() {
         gridMusicas.getChildren().clear();
         Musica atual = reprodutor.getMusicaAtual();
@@ -334,6 +377,7 @@ public class MusicPlayerController implements Initializable {
         }
     }
 
+    /** Exibe os cards da fila de reprodução atual em ordem de posição. */
     private void exibirFila() {
         gridMusicas.getChildren().clear();
         if (fila.isEmpty()) {
@@ -347,6 +391,7 @@ public class MusicPlayerController implements Initializable {
         }
     }
 
+    /** Exibe o histórico de músicas tocadas (mais recente primeiro). */
     private void exibirHistorico() {
         gridMusicas.getChildren().clear();
 
@@ -364,6 +409,7 @@ public class MusicPlayerController implements Initializable {
         }
     }
 
+    /** Exibe o ranking das músicas com mais reproduções em ordem decrescente. */
     private void exibirMaisTocadas() {
         gridMusicas.getChildren().clear();
 
@@ -385,6 +431,13 @@ public class MusicPlayerController implements Initializable {
         }
     }
 
+    /**
+     * Cria um card visual para uma música, com imagem do artista (ou cor
+     * de fallback), título, nome do artista e botão para adicionar à fila.
+     *
+     * @param musica música a ser exibida
+     * @return {@link javafx.scene.layout.VBox} com o card pronto
+     */
     private VBox criarCartaoMusica(Musica musica) {
         VBox cartao = new VBox(5);
         cartao.setStyle(
@@ -404,7 +457,7 @@ public class MusicPlayerController implements Initializable {
         } else {
             // Fallback: cor
             Rectangle rect = new Rectangle(120, 100);
-            rect.setFill(Color.web("#" + Integer.toHexString(musica.getArtista().hashCode() & 0xffffff)));
+            rect.setFill(Color.web(String.format("#%06x", musica.getArtista().hashCode() & 0xffffff)));
             cartao.getChildren().add(rect);
         }
 
@@ -428,6 +481,12 @@ public class MusicPlayerController implements Initializable {
         return cartao;
     }
 
+    /**
+     * Cria um card visual para um artista, com foto ou cor de fallback.
+     *
+     * @param artista nome do artista
+     * @return {@link javafx.scene.layout.VBox} com o card pronto
+     */
     private VBox criarCartaoArtista(String artista) {
         VBox cartao = new VBox(5);
         cartao.setStyle(
@@ -447,7 +506,7 @@ public class MusicPlayerController implements Initializable {
         } else {
             // Fallback: cor
             Rectangle rect = new Rectangle(120, 100);
-            rect.setFill(Color.web("#" + Integer.toHexString(artista.hashCode() & 0xffffff)));
+            rect.setFill(Color.web(String.format("#%06x", artista.hashCode() & 0xffffff)));
             cartao.getChildren().add(rect);
         }
 
@@ -459,6 +518,13 @@ public class MusicPlayerController implements Initializable {
         return cartao;
     }
 
+    /**
+     * Cria um card expandido (400px) para a música em reprodução,
+     * exibindo imagem maior, título, artista e duração formatada.
+     *
+     * @param musica música em reprodução
+     * @return {@link javafx.scene.layout.VBox} com o card grande
+     */
     private VBox criarCartaoGrande(Musica musica) {
         VBox cartao = new VBox(10);
         cartao.setPadding(new Insets(20));
@@ -479,7 +545,7 @@ public class MusicPlayerController implements Initializable {
         } else {
             // Fallback: cor
             Rectangle rect = new Rectangle(200, 200);
-            rect.setFill(Color.web("#" + Integer.toHexString(musica.getArtista().hashCode() & 0xffffff)));
+            rect.setFill(Color.web(String.format("#%06x", musica.getArtista().hashCode() & 0xffffff)));
             cartao.getChildren().add(rect);
         }
 
@@ -496,6 +562,13 @@ public class MusicPlayerController implements Initializable {
         return cartao;
     }
 
+    /**
+     * Cria um card para um item da fila de reprodução com número de posição.
+     *
+     * @param posicao posição do item na fila (base 1)
+     * @param musica  música na fila
+     * @return {@link javafx.scene.layout.VBox} com o card da fila
+     */
     private VBox criarCartaoFila(int posicao, Musica musica) {
         VBox cartao = new VBox(5);
         cartao.setStyle(
@@ -516,6 +589,14 @@ public class MusicPlayerController implements Initializable {
         return cartao;
     }
 
+    /**
+     * Cria um card para o histórico ou ranking, exibindo posição,
+     * título, artista e contagem de reproduções.
+     *
+     * @param posicao posição na lista (base 1)
+     * @param musica  música do histórico ou ranking
+     * @return {@link javafx.scene.layout.VBox} com o card
+     */
     private VBox criarCartaoHistorico(int posicao, Musica musica) {
         VBox cartao = new VBox(5);
         cartao.setStyle(
@@ -539,6 +620,12 @@ public class MusicPlayerController implements Initializable {
         return cartao;
     }
 
+    /**
+     * Atualiza os controles da barra inferior (nome, artista, imagem,
+     * slider e labels de tempo) com os dados da música informada.
+     *
+     * @param musica música a exibir; se {@code null}, reseta todos os controles
+     */
     private void atualizarPlayerBar(Musica musica) {
         if (musica == null) {
             lblNomeMusica.setText("Nenhuma música selecionada");
@@ -557,6 +644,11 @@ public class MusicPlayerController implements Initializable {
         imgPlayerThumb.setImage(carregarImagemArtista(musica.getArtista()));
     }
 
+    /**
+     * Remove a primeira música da fila, atualiza a barra do player,
+     * inicia a reprodução de áudio e registra a música como tocada
+     * no {@link reproducer.Reprodutor}.
+     */
     private void tocarProxima() {
         if (fila.isEmpty()) {
             return;
@@ -577,6 +669,15 @@ public class MusicPlayerController implements Initializable {
         }
     }
 
+    /**
+     * Tenta carregar a imagem do artista a partir dos recursos do classpath
+     * ({@code /images/artistas/}), tentando extensões {@code .jpg} e {@code .png}.
+     *
+     * @param nomeArtista nome do artista (será normalizado para lowercase com
+     *                    hífens)
+     * @return {@link javafx.scene.image.Image} carregada, ou {@code null} se não
+     *         encontrada
+     */
     private Image carregarImagemArtista(String nomeArtista) {
         if (nomeArtista == null || nomeArtista.isEmpty()) {
             return null;

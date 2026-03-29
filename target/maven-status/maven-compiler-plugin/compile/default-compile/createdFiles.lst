@@ -3,14 +3,15 @@ interfaces\IHash.class
 ui\MusicPlayerController.class
 structures\No.class
 structures\ArvoreAVL$NoAVL.class
-testejavafx\TesteSimples.class
 main\Main.class
-testejavafx\CarregadorMusicasCompleto.class
+player\ReprodutorAudioFX.class
+player\TesteReprodutorJavaFX.class
+player\TesteSimples.class
 structures\ArvoreAVL.class
 model\Playlist.class
 structures\FiladeReproducao.class
+player\CarregadorMusicasCompleto.class
 structures\HashArtistas.class
-testejavafx\ReprodutorAudioFX.class
 interfaces\ILista.class
 structures\HashArtistas$EntradaMusica.class
 structures\Pilha.class
@@ -21,6 +22,5 @@ ui\MusicPlayerUI.class
 interfaces\IPilha.class
 interfaces\IHeap.class
 interfaces\IArvore.class
-testejavafx\TesteReprodutorJavaFX.class
 interfaces\IFila.class
 structures\HeapBinaria.class

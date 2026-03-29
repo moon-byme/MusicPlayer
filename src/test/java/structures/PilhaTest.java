@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * 
  * primeiro teste: Push adiciona no topo
  * segundo teste: Pop remove do topo (LIFO)
+ *
+ * @author Isabelle
  */
 class PilhaTest {
 
@@ -24,28 +26,28 @@ class PilhaTest {
         musica2 = new Musica("Música 2", "Artista", "Pop", 200);
     }
 
-    
-    //1: push adiciona no topo(Firt in), pop remove do topo (last out)
-    //resultado ok = a saida é igual a entrada, mas invertida
+    // 1: push adiciona no topo(Firt in), pop remove do topo (last out)
+    // resultado ok = a saida é igual a entrada, mas invertida
     @Test
     void testLIFO() {
         pilha.push(musica1);
         pilha.push(musica2);
-        
+
         assertEquals(musica2, pilha.pop(), "Última a entrar deve ser primeira a sair");
         assertEquals(musica1, pilha.pop(), "Primeira a entrar");
     }
 
-    //2: Pop em pilha vazia retorna null
-    //resultado ok = null
+    // 2: Pop em pilha vazia retorna null
+    // resultado ok = null
     @Test
     void testPopPilhaVazia() {
         assertNull(pilha.pop(), "Pop em pilha vazia deve retornar null");
     }
 
-    //3: isEmpty funciona?
-    //cria pilha nova, verifica se ta vazia, depois adiciona uma musica, verifica se ta vazia de novo
-    //resultado ok = true para pilha vazia, false para pilha com elementos
+    // 3: isEmpty funciona?
+    // cria pilha nova, verifica se ta vazia, depois adiciona uma musica, verifica
+    // se ta vazia de novo
+    // resultado ok = true para pilha vazia, false para pilha com elementos
     @Test
     void testIsEmpty() {
         assertTrue(pilha.isEmpty());

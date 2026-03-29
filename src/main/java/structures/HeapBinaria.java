@@ -7,9 +7,19 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * HEAP BINÁRIA (Max-Heap)
- * 
+ * Heap binária máxima (Max-Heap) para ranquear músicas por número de
+ * reproduções.
+ *
+ * <p>
+ * A raiz sempre contém a música mais tocada. Operações de inserção e extração
+ * são O(log n). Implementada sobre um {@link java.util.ArrayList} com índices
+ * de
+ * pai/filho calculados aritmeticamente.
+ * </p>
+ *
  * @author Isabelle
+ * @see interfaces.IHeap
+ * @see model.Musica#getPlays()
  */
 public class HeapBinaria implements IHeap<Musica> {
 
@@ -76,7 +86,11 @@ public class HeapBinaria implements IHeap<Musica> {
         }
     }
 
-    // INSERE UMA MÚSICA NA HEAP (O(log n))
+    /**
+     * Insere uma música na heap e reajusta a propriedade max-heap — O(log n).
+     *
+     * @param musica música a ser inserida; ignorada se {@code null}
+     */
     public void inserir(Musica musica) {
         if (musica == null)
             return;

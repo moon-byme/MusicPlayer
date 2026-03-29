@@ -1,24 +1,51 @@
 package main;
 
 import model.Musica;
+import player.CarregadorMusicasCompleto;
+import player.ReprodutorAudioFX;
 import reproducer.Reprodutor;
 import structures.ArvoreAVL;
-import testejavafx.CarregadorMusicasCompleto;
-import testejavafx.ReprodutorAudioFX;
+
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Ponto de entrada do Reprodutor de Música em modo terminal.
+ *
+ * Inicializa o sistema, carrega o catálogo de músicas e exibe
+ * o menu interativo para o usuário navegar pelas funcionalidades.
+ *
+ * Estruturas de dados utilizadas indiretamente via {@link Reprodutor}:
+ * - {@link structures.ArvoreAVL} — catálogo de músicas (busca e listagem)
+ * - {@link structures.FiladeReproducao} — fila de reprodução (FIFO)
+ * - {@link structures.HistoricoMusicas} — histórico (LIFO / pilha)
+ * - {@link structures.HeapBinaria} — ranking de mais tocadas (max-heap)
+ * - {@link structures.HashArtistas} — agrupamento por artista (hash)
+ *
+ * @author Lethycia
+ */
 public class Main {
+
     private static ReprodutorAudioFX reprodutorAudio = new ReprodutorAudioFX();
-
     private static Reprodutor reprodutor = new Reprodutor();
-    private static Scanner scanner = new Scanner(System.in);
+    private static Scanner scanner = new Scanner(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 
+    /**
+     * Método principal: carrega as músicas e inicia o menu interativo.
+     *
+     * @param args argumentos de linha de comando (não utilizados)
+     */
     public static void main(String[] args) {
         carregarMusicasExemplo();
         exibirMenu();
     }
 
+    /**
+     * Carrega todas as músicas disponíveis no catálogo.
+     * Tenta carregar da pasta local; se não encontrar, usa músicas embutidas.
+     */
     private static void carregarMusicasExemplo() {
         System.out.println("Carregando músicas...");
         List<Musica> musicas = CarregadorMusicasCompleto.carregarTodasMusicas();
@@ -28,6 +55,9 @@ public class Main {
         System.out.println("✓ " + reprodutor.listarTodasMusicas().size() + " músicas carregadas.\n");
     }
 
+    /**
+     * Exibe o menu principal em loop até o usuário escolher sair (opção 0).
+     */
     private static void exibirMenu() {
         int opcao;
         do {
@@ -41,6 +71,7 @@ public class Main {
             System.out.println("7. Exibir fila de reprodução");
             System.out.println("8. Exibir histórico");
             System.out.println("9. Música atual");
+            System.out.println("10. Listar músicas por artista");
             System.out.println("0. Sair");
             System.out.print("Escolha: ");
 
@@ -57,19 +88,27 @@ public class Main {
                 case 8 -> reprodutor.exibirHistorico();
                 case 9 -> reprodutor.musicaAtual();
                 case 10 -> listarPorArtista();
-                case 0 -> System.out.println("Encerrando...");
+                case 0 -> {
+                    System.out.println("Encerrando...");
+                    javafx.application.Platform.exit();
+                    System.exit(0);
+                }
                 default -> System.out.println("Opção inválida!");
             }
         } while (opcao != 0);
     }
 
+    /**
+     * Lista todas as músicas do catálogo em ordem alfabética por título.
+     * Usa o percurso in-order da {@link ArvoreAVL}.
+     */
     private static void listarMusicas() {
         ArvoreAVL catalogo = reprodutor.getCatalogo();
         List<Musica> musicas = catalogo.inOrder();
         if (musicas.isEmpty()) {
-            System.out.println("Nenhuma m\u00fasica no cat\u00e1logo.");
+            System.out.println("Nenhuma música no catálogo.");
         } else {
-            System.out.println("\n===== CAT\u00c1LOGO COMPLETO =====");
+            System.out.println("\n===== CATÁLOGO COMPLETO =====");
             for (int i = 0; i < musicas.size(); i++) {
                 System.out.println((i + 1) + ". " + musicas.get(i).getTitulo() +
                         " - " + musicas.get(i).getArtista() +
@@ -78,12 +117,19 @@ public class Main {
         }
     }
 
+    /**
+     * Lista todas as músicas de um artista usando a
+     * {@link structures.HashArtistas}.
+     */
     private static void listarPorArtista() {
         System.out.print("Digite o nome do artista: ");
         String nome = scanner.nextLine().trim();
         reprodutor.listarPorArtista(nome);
     }
 
+    /**
+     * Busca músicas cujo título contenha o termo digitado (busca parcial).
+     */
     private static void buscarMusica() {
         System.out.print("Digite o título (ou parte): ");
         String termo = scanner.nextLine().trim();
@@ -98,6 +144,9 @@ public class Main {
         }
     }
 
+    /**
+     * Busca pelo título exato e adiciona a música à fila de reprodução.
+     */
     private static void adicionarNaFila() {
         System.out.print("Digite o título exato da música: ");
         String titulo = scanner.nextLine().trim();
@@ -109,6 +158,10 @@ public class Main {
         }
     }
 
+    /**
+     * Remove a próxima música da fila e a reproduz.
+     * Registra a reprodução no histórico e atualiza o ranking.
+     */
     private static void tocarProxima() {
         if (reprodutor.filaVazia()) {
             System.out.println("Fila vazia. Adicione músicas antes de tocar.");
@@ -118,7 +171,6 @@ public class Main {
         if (proxima != null) {
             boolean tocou = reprodutorAudio.tocarMusica(proxima);
             if (tocou) {
-                proxima.incrementarPlays();
                 reprodutor.marcarComoTocada(proxima);
                 System.out.println("▶ Reproduzindo: " + proxima.getTitulo());
                 reprodutorAudio.aguardarTermino();
@@ -130,23 +182,36 @@ public class Main {
         }
     }
 
+    /**
+     * Volta para a música anterior usando o histórico (pilha).
+     * Exibe a música atual após a operação.
+     */
     private static void voltarMusica() {
         reprodutor.voltarMusica();
-        // Opcional: mostrar a música atual após voltar
         reprodutor.musicaAtual();
     }
 
+    /**
+     * Exibe o ranking das músicas mais tocadas usando a
+     * {@link structures.HeapBinaria}.
+     */
     private static void mostrarRanking() {
         reprodutor.mostrarRanking();
     }
 
+    /**
+     * Lê um inteiro do terminal com validação de entrada.
+     * Descarta tokens inválidos até receber um número.
+     *
+     * @return o inteiro lido
+     */
     private static int lerInteiro() {
         while (!scanner.hasNextInt()) {
             System.out.print("Digite um número: ");
             scanner.next();
         }
         int valor = scanner.nextInt();
-        scanner.nextLine(); // consome quebra de linha
+        scanner.nextLine(); // consome a quebra de linha restante
         return valor;
     }
 }

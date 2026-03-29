@@ -1,4 +1,4 @@
-package testejavafx;
+package player;
 
 import model.Musica;
 import javafx.embed.swing.JFXPanel;
@@ -12,10 +12,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 
 /**
- * 🎵 REPRODUTOR DE ÁUDIO COM JAVAFX
- * 
- * Toca MP3 de verdade! Se não conseguir, usa modo simulação.
- * 
+ * Reprodutor de áudio com JavaFX.
+ *
+ * <p>
+ * Toca arquivos MP3 reais via {@link javafx.scene.media.MediaPlayer}.
+ * Se o JavaFX não estiver disponível ou o arquivo não for encontrado,
+ * entra em modo simulação, exibindo apenas mensagens no console.
+ * </p>
+ *
  * @author Isabelle
  */
 public class ReprodutorAudioFX {

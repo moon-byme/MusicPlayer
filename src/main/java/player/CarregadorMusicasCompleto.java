@@ -1,10 +1,22 @@
-package testejavafx;
+package player;
 
 import model.Musica;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Carregador de músicas para o player.
+ *
+ * <p>
+ * Tenta carregar os arquivos MP3 da pasta local
+ * {@code ~/Downloads/Músicas do Projeto}.
+ * Caso a pasta não seja encontrada, carrega uma lista embutida com
+ * 10 artistas e suas músicas como fallback.
+ * </p>
+ *
+ * @author Isabelle
+ */
 public class CarregadorMusicasCompleto {
 
     private static final String[][] ARTISTAS = {
@@ -20,6 +32,16 @@ public class CarregadorMusicasCompleto {
             { "TWICE", "K-pop" }
     };
 
+    /**
+     * Ponto de entrada principal para o carregamento do catálogo.
+     *
+     * <p>
+     * Primeiro tenta carregar músicas da pasta local do usuário.
+     * Caso a pasta não exista, utiliza a lista embutida como fallback.
+     * </p>
+     *
+     * @return lista com todas as músicas disponíveis (nunca {@code null})
+     */
     public static List<Musica> carregarTodasMusicas() {
         // List<Musica> musica = new ArrayList<>();
 
@@ -40,14 +62,26 @@ public class CarregadorMusicasCompleto {
         return carregarMusicasEmbutidas();
     }
 
+    /**
+     * Tenta localizar e carregar arquivos MP3 da pasta local do usuário.
+     *
+     * <p>
+     * Verifica sequencialmente os caminhos possíveis e utiliza o primeiro
+     * que existir. Para cada subpasta encontrada, interpreta o nome como
+     * artista e carrega todos os arquivos {@code .mp3} presentes.
+     * </p>
+     *
+     * @return lista de músicas encontradas, ou lista vazia se nenhum caminho
+     *         existir
+     */
     private static List<Musica> carregarDaPasta() {
         List<Musica> musica = new ArrayList<>();
 
         String userHome = System.getProperty("user.home");
         String[] caminhosPossiveis = {
-                userHome + "/Downloads/Músicas do Projeto/Músicas do Projeto",
-                "C:/Users/" + System.getProperty("user.name") + "/Downloads/Músicas do Projeto/Músicas do Projeto",
-                "./Músicas do Projeto/Músicas do Projeto"
+                userHome + "/Downloads/Músicas do Projeto",
+                "C:/Users/" + System.getProperty("user.name") + "/Downloads/Músicas do Projeto",
+                "./Músicas do Projeto"
         };
 
         File pastaPrincipal = null;
@@ -91,6 +125,16 @@ public class CarregadorMusicasCompleto {
         return musica;
     }
 
+    /**
+     * Retorna uma lista embutida de músicas de exemplo.
+     *
+     * <p>
+     * Utilizada como fallback quando a pasta local não é encontrada.
+     * Contém 10 artistas com suas músicas predefinidas.
+     * </p>
+     *
+     * @return lista com as músicas embutidas
+     */
     private static List<Musica> carregarMusicasEmbutidas() {
         List<Musica> musica = new ArrayList<>();
 
@@ -122,6 +166,17 @@ public class CarregadorMusicasCompleto {
         return musica;
     }
 
+    /**
+     * Retorna o gênero musical de um artista pelo nome.
+     *
+     * <p>
+     * Busca no array {@link #ARTISTAS} de forma case-insensitive.
+     * Retorna {@code "Pop"} como padrão quando o artista não é encontrado.
+     * </p>
+     *
+     * @param artista nome do artista a pesquisar
+     * @return gênero musical correspondente, ou {@code "Pop"} se não encontrado
+     */
     private static String extrairGenero(String artista) {
         for (String[] a : ARTISTAS) {
             if (a[0].equalsIgnoreCase(artista)) {
