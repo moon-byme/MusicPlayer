@@ -33,6 +33,15 @@ public class HistoricoMusicas {
      * @param musica música a ser registrada
      */
     public void adicionar(Musica musica) {
+        No<Musica> atual = topo;
+        while (atual != null) { 
+            if (atual.getDado().getTitulo().equals(musica.getTitulo())) { // verifica se a musica atual é igual a anterior
+                return; // já está no histórico
+            }
+            atual = atual.getProximo();
+        }
+
+        // senão, adiciona no topo
         No<Musica> novoNo = new No<>(musica);
         novoNo.setProximo(topo);
         topo = novoNo;
@@ -40,7 +49,7 @@ public class HistoricoMusicas {
     }
 
     /**
-     * Remove e retorna a música mais recente do histórico (topo da pilha).
+     * retorna a música mais recente do histórico (topo da pilha) sem remover.
      *
      * @return música mais recente, ou {@code null} se o histórico estiver vazio
      */
@@ -48,12 +57,7 @@ public class HistoricoMusicas {
         if (isEmpty()) {
             return null;
         }
-
-        Musica ultimaMusica = topo.getDado();
-        topo = topo.getProximo();
-        tamanho--;
-
-        return ultimaMusica;
+        return topo.getDado();
     }
 
     /**
