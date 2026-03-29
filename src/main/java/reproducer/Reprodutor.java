@@ -227,15 +227,37 @@ public class Reprodutor {
     public List<Musica> buscarMusicasPorTitulo(String parte) {
         List<Musica> resultado = new ArrayList<>();
         String parteNorm = normalizar(parte);
-        String[] termos = termosSignificativos(parteNorm);
+        if (parteNorm.isBlank()) {
+            return resultado;
+        }
+
+        String[] termosBusca = termosSignificativos(parteNorm);
 
         for (Musica m : catalogo.inOrder()) {
             String tituloNorm = normalizar(m.getTitulo());
-            if (tituloNorm.contains(parteNorm) || contemTodosOsTermos(tituloNorm, termos)) {
+            String[] termosTitulo = termosSignificativos(tituloNorm);
+            if (correspondeBuscaTitulo(tituloNorm, termosTitulo, parteNorm, termosBusca)) {
                 resultado.add(m);
             }
         }
         return resultado;
+    }
+
+    private static boolean correspondeBuscaTitulo(String tituloNorm, String[] termosTitulo, String parteNorm,
+            String[] termosBusca) {
+        if (parteNorm.length() >= 4 && tituloNorm.contains(parteNorm)) {
+            return true;
+        }
+
+        if (parteNorm.length() < 3) {
+            return false;
+        }
+
+        if (termosBusca.length == 1) {
+            return algumaPalavraComecaCom(termosTitulo, parteNorm);
+        }
+
+        return contemTodosOsTermos(termosTitulo, termosBusca);
     }
 
     private static String normalizar(String s) {
@@ -259,18 +281,36 @@ public class Reprodutor {
         return texto.split(" ");
     }
 
-    private static boolean contemTodosOsTermos(String texto, String[] termos) {
-        if (termos.length == 0) {
+    private static boolean algumaPalavraComecaCom(String[] termosTitulo, String termoBusca) {
+        for (String termoTitulo : termosTitulo) {
+            if (termoTitulo.startsWith(termoBusca)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean contemTodosOsTermos(String[] termosTitulo, String[] termosBusca) {
+        if (termosTitulo.length == 0 || termosBusca.length == 0) {
             return false;
         }
 
         int termosUteis = 0;
-        for (String termo : termos) {
-            if (termo.length() < 2) {
+        for (String termoBusca : termosBusca) {
+            if (termoBusca.length() < 3) {
                 continue;
             }
             termosUteis++;
-            if (!texto.contains(termo)) {
+
+            boolean encontrou = false;
+            for (String termoTitulo : termosTitulo) {
+                if (termoTitulo.startsWith(termoBusca) || termoTitulo.contains(termoBusca)) {
+                    encontrou = true;
+                    break;
+                }
+            }
+
+            if (!encontrou) {
                 return false;
             }
         }

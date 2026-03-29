@@ -6,6 +6,9 @@ import player.ReprodutorAudioFX;
 import reproducer.Reprodutor;
 import structures.ArvoreAVL;
 
+import java.io.Console;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Scanner;
 
@@ -28,7 +31,13 @@ public class Main {
 
     private static ReprodutorAudioFX reprodutorAudio = new ReprodutorAudioFX();
     private static Reprodutor reprodutor = new Reprodutor();
-    private static Scanner scanner = new Scanner(System.in);
+    private static Scanner scanner = criarScanner();
+
+    private static Scanner criarScanner() {
+        Console console = System.console();
+        Charset charset = console != null ? console.charset() : Charset.defaultCharset();
+        return new Scanner(new InputStreamReader(System.in, charset));
+    }
 
     /**
      * Método principal: carrega as músicas e inicia o menu interativo.
