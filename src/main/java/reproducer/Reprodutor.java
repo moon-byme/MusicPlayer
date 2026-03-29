@@ -56,7 +56,7 @@ public class Reprodutor {
 
     }
 
-    // public void adicionarMusica(Musica musica) {
+    public void adicionarMusica(Musica musica) {
         catalogo.inserir(musica);
         hashArtistas.inserir(musica);
         System.out.println("✓ Música \"" + musica.getTitulo() + "\" adicionada.");
@@ -217,6 +217,10 @@ public class Reprodutor {
 
     public boolean filaVazia() {
         return fila.isEmpty();
+    }
+
+    public List<Musica> getFilaComoLista() {
+        return fila.toList();
     }
 
     public List<Musica> buscarMusicasPorTitulo(String parte) {

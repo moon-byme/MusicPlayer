@@ -5,10 +5,7 @@ structures\No.class
 structures\ArvoreAVL$NoAVL.class
 main\Main.class
 player\ReprodutorAudioFX.class
-player\TesteReprodutorJavaFX.class
-player\TesteSimples.class
 structures\ArvoreAVL.class
-model\Playlist.class
 structures\FiladeReproducao.class
 player\CarregadorMusicasCompleto.class
 structures\HashArtistas.class
@@ -17,6 +14,7 @@ structures\HashArtistas$EntradaMusica.class
 structures\Pilha.class
 reproducer\Reprodutor.class
 model\Musica.class
+util\CarregadorMusicasCompleto.class
 model\Artista.class
 ui\MusicPlayerUI.class
 interfaces\IPilha.class

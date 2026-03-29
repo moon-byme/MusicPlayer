@@ -50,8 +50,6 @@ import model.Musica;
 import player.CarregadorMusicasCompleto;
 import player.ReprodutorAudioFX;
 import reproducer.Reprodutor;
-import testejavafx.ReprodutorAudioFX;
-import util.CarregadorMusicasCompleto;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -64,8 +62,6 @@ public class MusicPlayerController implements Initializable {
     private Button btnArtistas;
     @FXML
     private Button btnMusicasCatalogo;
-    @FXML
-    private Button btnTocando;
     @FXML
     private Button btnLista;
     @FXML
@@ -122,7 +118,6 @@ public class MusicPlayerController implements Initializable {
     private final Reprodutor reprodutor = new Reprodutor();
     private final ReprodutorAudioFX player = new ReprodutorAudioFX();
     private final ObservableList<Musica> musicas = FXCollections.observableArrayList();
-    private final List<Musica> fila = new ArrayList<>();
     private String modoAtual = "songs";
     private Timeline timerTempo;
 
@@ -229,15 +224,9 @@ public class MusicPlayerController implements Initializable {
             exibirArtistas();
         });
 
-        btnTocando.setOnAction(e -> {
-            modoAtual = "playing";
-            lblTitulo.setText("▶ Reproduzindo");
-            exibirTocando();
-        });
-
         btnLista.setOnAction(e -> {
             modoAtual = "queue";
-            lblTitulo.setText("📋 Lista de Reprodução");
+            lblTitulo.setText("📋 Playlist");
             exibirFila();
         });
 
@@ -258,7 +247,7 @@ public class MusicPlayerController implements Initializable {
                 player.pausar();
                 btnTocar.setText("▶");
                 lblAgora.setText("⏸ Pausado");
-            } else if (!fila.isEmpty()) {
+            } else if (!reprodutor.filaVazia()) {
                 tocarProxima();
             } else if (reprodutor.getMusicaAtual() != null) {
                 player.retomar();
@@ -269,7 +258,7 @@ public class MusicPlayerController implements Initializable {
         });
 
         btnProxima.setOnAction(e -> {
-            if (!fila.isEmpty()) {
+            if (!reprodutor.filaVazia()) {
                 tocarProxima();
             }
         });
@@ -374,7 +363,7 @@ public class MusicPlayerController implements Initializable {
         if (atual != null) {
             gridMusicas.getChildren().add(criarCartaoGrande(atual));
         } else {
-            Label label = new Label("Nenhuma música tocando");
+            Label label = new Label("Adicione músicas à playlist para começar");
             gridMusicas.getChildren().add(label);
         }
     }
@@ -382,13 +371,13 @@ public class MusicPlayerController implements Initializable {
     /** Exibe os cards da fila de reprodução atual em ordem de posição. */
     private void exibirFila() {
         gridMusicas.getChildren().clear();
-        if (fila.isEmpty()) {
-            Label label = new Label("Fila vazia");
+        List<Musica> filaLista = reprodutor.getFilaComoLista();
+        if (filaLista.isEmpty()) {
+            Label label = new Label("Adicione músicas à playlist para começar");
             gridMusicas.getChildren().add(label);
         } else {
-            for (int i = 0; i < fila.size(); i++) {
-                Musica m = fila.get(i);
-                gridMusicas.getChildren().add(criarCartaoFila(i + 1, m));
+            for (int i = 0; i < filaLista.size(); i++) {
+                gridMusicas.getChildren().add(criarCartaoFila(i + 1, filaLista.get(i)));
             }
         }
     }
@@ -475,8 +464,19 @@ public class MusicPlayerController implements Initializable {
         btnAdicionar.setStyle(
                 "-fx-font-size: 10; -fx-background-color: #E8587A; -fx-text-fill: #FFFFFF; -fx-background-radius: 4; -fx-cursor: hand;");
         btnAdicionar.setOnAction(e -> {
-            fila.add(musica);
+            reprodutor.adicionarNaFila(musica);
             lblAgora.setText("✓ Adicionado: " + musica.getTitulo());
+            btnAdicionar.setText("✓ Adicionado");
+            btnAdicionar.setDisable(true);
+            // Se não há música exibida no player, mostra a primeira da fila sem tocar
+            if (reprodutor.getMusicaAtual() == null && reprodutor.getFilaComoLista().size() == 1) {
+                atualizarPlayerBar(musica);
+            }
+            Timeline reverter = new Timeline(new KeyFrame(Duration.seconds(1.5), ev -> {
+                btnAdicionar.setText("+ Adicionar");
+                btnAdicionar.setDisable(false);
+            }));
+            reverter.play();
         });
 
         cartao.getChildren().addAll(titulo, artista, btnAdicionar);
@@ -630,7 +630,7 @@ public class MusicPlayerController implements Initializable {
      */
     private void atualizarPlayerBar(Musica musica) {
         if (musica == null) {
-            lblNomeMusica.setText("Nenhuma música selecionada");
+            lblNomeMusica.setText(" Adicione músicas à playlist para começar");
             lblArtistaPlayer.setText("");
             sliderProgresso.setValue(0);
             lblTempoAtual.setText("0:00");
@@ -652,11 +652,11 @@ public class MusicPlayerController implements Initializable {
      * no {@link reproducer.Reprodutor}.
      */
     private void tocarProxima() {
-        if (fila.isEmpty()) {
+        if (reprodutor.filaVazia()) {
             return;
         }
 
-        Musica proxima = fila.remove(0);
+        Musica proxima = reprodutor.obterProximaDaFila();
         atualizarPlayerBar(proxima);
         boolean sucesso = player.tocarMusica(proxima);
 

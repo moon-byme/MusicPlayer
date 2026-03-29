@@ -7,11 +7,8 @@ C:\Users\camar\Desktop\projeto-eda\src\main\java\interfaces\IPilha.java
 C:\Users\camar\Desktop\projeto-eda\src\main\java\main\Main.java
 C:\Users\camar\Desktop\projeto-eda\src\main\java\model\Artista.java
 C:\Users\camar\Desktop\projeto-eda\src\main\java\model\Musica.java
-C:\Users\camar\Desktop\projeto-eda\src\main\java\model\Playlist.java
 C:\Users\camar\Desktop\projeto-eda\src\main\java\player\CarregadorMusicasCompleto.java
 C:\Users\camar\Desktop\projeto-eda\src\main\java\player\ReprodutorAudioFX.java
-C:\Users\camar\Desktop\projeto-eda\src\main\java\player\TesteReprodutorJavaFX.java
-C:\Users\camar\Desktop\projeto-eda\src\main\java\player\TesteSimples.java
 C:\Users\camar\Desktop\projeto-eda\src\main\java\reproducer\Reprodutor.java
 C:\Users\camar\Desktop\projeto-eda\src\main\java\structures\ArvoreAVL.java
 C:\Users\camar\Desktop\projeto-eda\src\main\java\structures\FiladeReproducao.java
@@ -22,3 +19,4 @@ C:\Users\camar\Desktop\projeto-eda\src\main\java\structures\No.java
 C:\Users\camar\Desktop\projeto-eda\src\main\java\structures\Pilha.java
 C:\Users\camar\Desktop\projeto-eda\src\main\java\ui\MusicPlayerController.java
 C:\Users\camar\Desktop\projeto-eda\src\main\java\ui\MusicPlayerUI.java
+C:\Users\camar\Desktop\projeto-eda\src\main\java\util\CarregadorMusicasCompleto.java
